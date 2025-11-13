@@ -1,0 +1,13 @@
+{
+  "name": "check-iphone-tool",
+  "version": "1.0.0",
+  "description": "Web tool to auto unpair/pair and fetch iPhone info using libimobiledevice",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pdfkit": "^0.13.0"
+  }
+}

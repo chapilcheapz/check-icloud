@@ -1,0 +1,611 @@
+{
+    "iPhone1,1": {
+        "name": "iPhone 2G",
+        "generation": "1st",
+        "year": 2007,
+        "modelNumbers": {
+            "MA501": "4GB",
+            "MA712": "8GB"
+        }
+    },
+    "iPhone1,2": {
+        "name": "iPhone 3G",
+        "generation": "2nd",
+        "year": 2008,
+        "modelNumbers": {
+            "MB046": "8GB",
+            "MB048": "16GB"
+        }
+    },
+    "iPhone2,1": {
+        "name": "iPhone 3GS",
+        "generation": "3rd",
+        "year": 2009,
+        "modelNumbers": {
+            "MC131": "8GB",
+            "MC133": "16GB",
+            "MC135": "32GB"
+        }
+    },
+    "iPhone3,1": {
+        "name": "iPhone 4 (GSM)",
+        "generation": "4th",
+        "year": 2010,
+        "modelNumbers": {
+            "MC603": "8GB",
+            "MC605": "16GB",
+            "MC607": "32GB"
+        }
+    },
+    "iPhone3,3": {
+        "name": "iPhone 4 (CDMA)",
+        "generation": "4th",
+        "year": 2011,
+        "modelNumbers": {
+            "MC676": "8GB",
+            "MC678": "16GB",
+            "MC679": "32GB"
+        }
+    },
+    "iPhone4,1": {
+        "name": "iPhone 4S",
+        "generation": "5th",
+        "year": 2011,
+        "modelNumbers": {
+            "MD234": "8GB",
+            "MD235": "16GB",
+            "MD239": "32GB",
+            "MD240": "64GB"
+        }
+    },
+    "iPhone5,1": {
+        "name": "iPhone 5 (GSM)",
+        "generation": "6th",
+        "year": 2012,
+        "modelNumbers": {
+            "MD634": "16GB",
+            "MD635": "32GB",
+            "MD642": "64GB"
+        }
+    },
+    "iPhone5,2": {
+        "name": "iPhone 5 (Global)",
+        "generation": "6th",
+        "year": 2012,
+        "modelNumbers": {
+            "ME039": "16GB",
+            "ME041": "32GB",
+            "ME043": "64GB"
+        }
+    },
+    "iPhone5,3": {
+        "name": "iPhone 5c (GSM)",
+        "generation": "6th",
+        "year": 2013,
+        "modelNumbers": {
+            "ME553": "8GB",
+            "ME555": "16GB",
+            "ME557": "32GB"
+        }
+    },
+    "iPhone5,4": {
+        "name": "iPhone 5c (Global)",
+        "generation": "6th",
+        "year": 2013,
+        "modelNumbers": {
+            "MF131": "8GB",
+            "MF133": "16GB",
+            "MF135": "32GB"
+        }
+    },
+    "iPhone6,1": {
+        "name": "iPhone 5s (GSM)",
+        "generation": "7th",
+        "year": 2013,
+        "modelNumbers": {
+            "ME323": "16GB",
+            "ME324": "32GB",
+            "ME325": "64GB"
+        }
+    },
+    "iPhone6,2": {
+        "name": "iPhone 5s (Global)",
+        "generation": "7th",
+        "year": 2013,
+        "modelNumbers": {
+            "ME341": "16GB",
+            "ME342": "32GB",
+            "ME343": "64GB"
+        }
+    },
+    "iPhone7,2": {
+        "name": "iPhone 6",
+        "generation": "8th",
+        "year": 2014,
+        "modelNumbers": {
+            "MG4F2": "16GB",
+            "MG4N2": "64GB",
+            "MG4P2": "128GB"
+        }
+    },
+    "iPhone7,1": {
+        "name": "iPhone 6 Plus",
+        "generation": "8th",
+        "year": 2014,
+        "modelNumbers": {
+            "MG9J2": "16GB",
+            "MGA82": "64GB",
+            "MGA92": "128GB"
+        }
+    },
+    "iPhone8,1": {
+        "name": "iPhone 6s",
+        "generation": "9th",
+        "year": 2015,
+        "modelNumbers": {
+            "MKQJ2": "16GB",
+            "MKQP2": "32GB",
+            "MKQQ2": "64GB",
+            "MKQR2": "128GB"
+        }
+    },
+    "iPhone8,2": {
+        "name": "iPhone 6s Plus",
+        "generation": "9th",
+        "year": 2015,
+        "modelNumbers": {
+            "MKW12": "16GB",
+            "MKW72": "32GB",
+            "MKW82": "64GB",
+            "MKW92": "128GB"
+        }
+    },
+    "iPhone8,4": {
+        "name": "iPhone SE (1st gen)",
+        "generation": "SE",
+        "year": 2016,
+        "modelNumbers": {
+            "MLLP2": "16GB",
+            "MLM62": "32GB",
+            "MLM72": "64GB",
+            "MLM82": "128GB"
+        }
+    },
+    "iPhone9,1": {
+        "name": "iPhone 7 (Global)",
+        "generation": "10th",
+        "year": 2016,
+        "modelNumbers": {
+            "MNAJ2": "32GB",
+            "MNAK2": "128GB",
+            "MNAL2": "256GB"
+        }
+    },
+    "iPhone9,3": {
+        "name": "iPhone 7 (GSM)",
+        "generation": "10th",
+        "year": 2016,
+        "modelNumbers": {
+            "MN9F2": "32GB",
+            "MN9G2": "128GB",
+            "MN9H2": "256GB"
+        }
+    },
+    "iPhone9,2": {
+        "name": "iPhone 7 Plus (Global)",
+        "generation": "10th",
+        "year": 2016,
+        "modelNumbers": {
+            "MNQM2": "32GB",
+            "MNQN2": "128GB",
+            "MNQP2": "256GB"
+        }
+    },
+    "iPhone9,4": {
+        "name": "iPhone 7 Plus (GSM)",
+        "generation": "10th",
+        "year": 2016,
+        "modelNumbers": {
+            "MNQQ2": "32GB",
+            "MNQR2": "128GB",
+            "MNQT2": "256GB"
+        }
+    },
+    "iPhone10,1": {
+        "name": "iPhone 8 (Global)",
+        "generation": "11th",
+        "year": 2017,
+        "modelNumbers": {
+            "MQ6G2": "64GB",
+            "MQ6H2": "256GB"
+        }
+    },
+    "iPhone10,4": {
+        "name": "iPhone 8 (GSM)",
+        "generation": "11th",
+        "year": 2017,
+        "modelNumbers": {
+            "MQ7G2": "64GB",
+            "MQ7H2": "256GB"
+        }
+    },
+    "iPhone10,2": {
+        "name": "iPhone 8 Plus (Global)",
+        "generation": "11th",
+        "year": 2017,
+        "modelNumbers": {
+            "MQ8F2": "64GB",
+            "MQ8G2": "256GB"
+        }
+    },
+    "iPhone10,5": {
+        "name": "iPhone 8 Plus (GSM)",
+        "generation": "11th",
+        "year": 2017,
+        "modelNumbers": {
+            "MQ8H2": "64GB",
+            "MQ8J2": "256GB"
+        }
+    },
+    "iPhone10,3": {
+        "name": "iPhone X (Global)",
+        "generation": "11th",
+        "year": 2017,
+        "modelNumbers": {
+            "MQA62": "64GB",
+            "MQA82": "256GB"
+        }
+    },
+    "iPhone10,6": {
+        "name": "iPhone X (GSM)",
+        "generation": "11th",
+        "year": 2017,
+        "modelNumbers": {
+            "MQC12": "64GB",
+            "MQC22": "256GB"
+        }
+    },
+    "iPhone11,8": {
+        "name": "iPhone XR",
+        "generation": "12th",
+        "year": 2018,
+        "modelNumbers": {
+            "MT0T2": "64GB",
+            "MT0U2": "128GB",
+            "MT0V2": "256GB"
+        }
+    },
+    "iPhone11,2": {
+        "name": "iPhone Xs",
+        "generation": "12th",
+        "year": 2018,
+        "modelNumbers": {
+            "MT9H2": "64GB",
+            "MT9J2": "256GB",
+            "MT9K2": "512GB"
+        }
+    },
+    "iPhone11,4": {
+        "name": "iPhone Xs Max (China)",
+        "generation": "12th",
+        "year": 2018,
+        "modelNumbers": {
+            "MT5A2": "64GB",
+            "MT5B2": "256GB",
+            "MT5C2": "512GB"
+        }
+    },
+    "iPhone11,6": {
+        "name": "iPhone Xs Max",
+        "generation": "12th",
+        "year": 2018,
+        "modelNumbers": {
+            "MT5M2": "64GB",
+            "MT5N2": "256GB",
+            "MT5P2": "512GB"
+        }
+    },
+    "iPhone12,1": {
+        "name": "iPhone 11",
+        "generation": "13th",
+        "year": 2019,
+        "modelNumbers": {
+            "MWLT2": "64GB",
+            "MWLW2": "128GB",
+            "MWM02": "256GB"
+        }
+    },
+    "iPhone12,3": {
+        "name": "iPhone 11 Pro",
+        "generation": "13th",
+        "year": 2019,
+        "modelNumbers": {
+            "MWLX2": "64GB",
+            "MWLY2": "256GB",
+            "MWLZ2": "512GB"
+        }
+    },
+    "iPhone12,5": {
+        "name": "iPhone 11 Pro Max",
+        "generation": "13th",
+        "year": 2019,
+        "modelNumbers": {
+            "MWMF2": "64GB",
+            "MWMG2": "256GB",
+            "MWMH2": "512GB"
+        }
+    },
+    "iPhone12,8": {
+        "name": "iPhone SE (2nd gen)",
+        "generation": "SE",
+        "year": 2020,
+        "modelNumbers": {
+            "MX992": "64GB",
+            "MX9A2": "128GB",
+            "MX9C2": "256GB"
+        }
+    },
+    "iPhone13,1": {
+        "name": "iPhone 12 mini",
+        "generation": "14th",
+        "year": 2020,
+        "modelNumbers": {
+            "MGH63": "64GB",
+            "MGH73": "128GB",
+            "MGH83": "256GB"
+        }
+    },
+    "iPhone13,2": {
+        "name": "iPhone 12",
+        "generation": "14th",
+        "year": 2020,
+        "modelNumbers": {
+            "MGH93": "64GB",
+            "MGHA3": "128GB",
+            "MGHJ3": "256GB"
+        }
+    },
+    "iPhone13,3": {
+        "name": "iPhone 12 Pro",
+        "generation": "14th",
+        "year": 2020,
+        "modelNumbers": {
+            "MGLN3": "128GB",
+            "MGLP3": "256GB",
+            "MGLQ3": "512GB"
+        }
+    },
+    "iPhone13,4": {
+        "name": "iPhone 12 Pro Max",
+        "generation": "14th",
+        "year": 2020,
+        "modelNumbers": {
+            "MGC73": "128GB",
+            "MGC83": "256GB",
+            "MGC93": "512GB"
+        }
+    },
+    "iPhone14,4": {
+        "name": "iPhone 13 mini",
+        "generation": "15th",
+        "year": 2021,
+        "modelNumbers": {
+            "MLK53": "128GB",
+            "MLK63": "256GB",
+            "MLK73": "512GB"
+        }
+    },
+    "iPhone14,5": {
+        "name": "iPhone 13",
+        "generation": "15th",
+        "year": 2021,
+        "modelNumbers": {
+            "MLPF3": "128GB",
+            "MLPG3": "256GB",
+            "MLPH3": "512GB"
+        }
+    },
+    "iPhone14,2": {
+        "name": "iPhone 13 Pro",
+        "generation": "15th",
+        "year": 2021,
+        "modelNumbers": {
+            "MLT53": "128GB",
+            "MLT63": "256GB",
+            "MLT73": "512GB",
+            "MLT83": "1TB"
+        }
+    },
+    "iPhone14,3": {
+        "name": "iPhone 13 Pro Max",
+        "generation": "15th",
+        "year": 2021,
+        "modelNumbers": {
+            "MLLA3": "128GB",
+            "MLLC3": "256GB",
+            "MLLD3": "512GB",
+            "MLLE3": "1TB"
+        }
+    },
+    "iPhone14,6": {
+        "name": "iPhone SE (3rd gen)",
+        "generation": "SE",
+        "year": 2022,
+        "modelNumbers": {
+            "MMX53": "64GB",
+            "MMX63": "128GB",
+            "MMX73": "256GB"
+        }
+    },
+    "iPhone14,7": {
+        "name": "iPhone 14",
+        "generation": "16th",
+        "year": 2022,
+        "modelNumbers": {
+            "MPUA3": "128GB",
+            "MPUF3": "256GB",
+            "MPUN3": "512GB"
+        }
+    },
+    "iPhone14,8": {
+        "name": "iPhone 14 Plus",
+        "generation": "16th",
+        "year": 2022,
+        "modelNumbers": {
+            "MQ3E3": "128GB",
+            "MQ3F3": "256GB",
+            "MQ3G3": "512GB"
+        }
+    },
+    "iPhone15,2": {
+        "name": "iPhone 14 Pro",
+        "generation": "16th",
+        "year": 2022,
+        "modelNumbers": {
+            "MPXV3": "128GB",
+            "MPY13": "256GB",
+            "MPY53": "512GB",
+            "MPY93": "1TB"
+        }
+    },
+    "iPhone15,3": {
+        "name": "iPhone 14 Pro Max",
+        "generation": "16th",
+        "year": 2022,
+        "modelNumbers": {
+            "MQ8R3": "128GB",
+            "MQ8T3": "256GB",
+            "MQ8U3": "512GB",
+            "MQ8V3": "1TB"
+        }
+    },
+    "iPhone15,4": {
+        "name": "iPhone 15",
+        "generation": "17th",
+        "year": 2023,
+        "modelNumbers": {
+            "MTP03": "128GB",
+            "MTP13": "256GB",
+            "MTP23": "512GB"
+        }
+    },
+    "iPhone15,5": {
+        "name": "iPhone 15 Plus",
+        "generation": "17th",
+        "year": 2023,
+        "modelNumbers": {
+            "MTP73": "128GB",
+            "MTP83": "256GB",
+            "MTP93": "512GB"
+        }
+    },
+    "iPhone16,1": {
+        "name": "iPhone 15 Pro",
+        "generation": "17th",
+        "year": 2023,
+        "modelNumbers": {
+            "MTUF3": "128GB",
+            "MTUG3": "256GB",
+            "MTUH3": "512GB",
+            "MTUJ3": "1TB"
+        }
+    },
+    "iPhone16,2": {
+        "name": "iPhone 15 Pro Max",
+        "generation": "17th",
+        "year": 2023,
+        "modelNumbers": {
+            "MTUM3": "256GB",
+            "MTUN3": "512GB",
+            "MTUP3": "1TB"
+        }
+    },
+    "iPhone17,1": {
+        "name": "iPhone 16 Pro",
+        "generation": "18th",
+        "year": 2024,
+        "modelNumbers": {
+            "MU2F3": "256GB",
+            "MU2G3": "512GB",
+            "MU2H3": "1TB"
+        }
+    },
+    "iPhone17,2": {
+        "name": "iPhone 16 Pro Max",
+        "generation": "18th",
+        "year": 2024,
+        "modelNumbers": {
+            "MU2K3": "256GB",
+            "MU2L3": "512GB",
+            "MU2M3": "1TB"
+        }
+    },
+    "iPhone17,3": {
+        "name": "iPhone 16 Plus",
+        "generation": "18th",
+        "year": 2024,
+        "modelNumbers": {
+            "MWD53": "128GB",
+            "MWD63": "256GB",
+            "MWD73": "512GB"
+        }
+    },
+    "iPhone17,4": {
+        "name": "iPhone 16",
+        "generation": "18th",
+        "year": 2024,
+        "modelNumbers": {
+            "MWD13": "128GB",
+            "MWD23": "256GB",
+            "MWD33": "512GB"
+        }
+    },
+    "iPhone17,5": {
+        "name": "iPhone 16e",
+        "generation": "18th",
+        "year": 2025,
+        "modelNumbers": {
+            "A3523": "128GB",
+            "A3524": "256GB"
+        }
+    },
+    "iPhone18,3": {
+        "name": "iPhone 17",
+        "generation": "19th",
+        "year": 2025,
+        "modelNumbers": {
+            "A3519": "256GB",
+            "A3520": "512GB"
+        }
+    },
+    "iPhone18,4": {
+        "name": "iPhone Air",
+        "generation": "19th",
+        "year": 2025,
+        "modelNumbers": {
+            "A3517": "256GB",
+            "A3260": "512GB",
+            "A3518": "1TB"
+        }
+    },
+    "iPhone18,1": {
+        "name": "iPhone 17 Pro",
+        "generation": "19th",
+        "year": 2025,
+        "modelNumbers": {
+            "A3525": "256GB",
+            "A3526": "512GB",
+            "A3527": "1TB"
+        }
+    },
+    "iPhone18,2": {
+        "name": "iPhone 17 Pro Max",
+        "generation": "19th",
+        "year": 2025,
+        "modelNumbers": {
+            "A3528": "256GB",
+            "A3529": "512GB",
+            "A3530": "2TB"
+        }
+    }
+}
