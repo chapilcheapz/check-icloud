@@ -56,11 +56,41 @@ function parseInfo(output) {
 
   // === iCLOUD ===
   let icloud = 'UNKNOWN';
-  const fmLocked = res['fm-activation-locked'];
-  if (fmLocked === 'Tk8=') icloud = 'OFF';
-  else if (fmLocked === 'WUVT') icloud = 'ON';
-  else if (res['PasswordProtected'] === 'true') icloud = 'ON';
-  else if (res['PasswordProtected'] === 'false') icloud = 'OFF';
+
+  // Base64 decode helper
+  const decode = (v) => {
+    try { return Buffer.from(v, 'base64').toString('utf8'); }
+    catch { return v; }
+  };
+
+  const fmLockedRaw = res['fm-activation-locked'];
+  const fmLocked = decode(fmLockedRaw);     // "YES", "NO", hoặc nonsense
+  const fmEmailRaw = res['fm-account-masked'];
+  const fmEmail = fmEmailRaw ? decode(fmEmailRaw) : null;
+  const fmStatusRaw = res['fm-spstatus'];
+  const fmStatus = fmStatusRaw ? decode(fmStatusRaw) : null;
+
+  // --- Logic check iCloud FULL ---
+  if (fmLocked === 'YES' || fmStatus === 'YES') {
+
+    if (fmEmail && fmEmail.length > 0) {
+      // Có email → iCloud locked rõ ràng
+      icloud = 'ON';
+    } else {
+      // Không có email → iCloud ẩn (vẫn khóa vì fmLocked=YES)
+      icloud = 'ON_HIDDEN';
+    }
+
+  } else if (fmLocked === 'NO') {
+
+    // fmLocked = NO → Find My OFF (trừ khi PasswordProtected ghi đè)
+    icloud = 'OFF';
+
+  } else {
+    // Fallback: dùng PasswordProtected
+    if (res['PasswordProtected'] === 'true') icloud = 'ON';
+    else if (res['PasswordProtected'] === 'false') icloud = 'OFF';
+  }
 
   const device = getDeviceInfo(res['ProductType'], res['ModelNumber']);
 
@@ -139,7 +169,7 @@ app.get('/pdf', (req, res) => {
   doc.pipe(res);
 
   doc.fontSize(24).font('Helvetica-Bold').fillColor('#007AFF')
-     .text('BÁO CÁO KIỂM TRA iPHONE', { align: 'center' });
+    .text('BÁO CÁO KIỂM TRA iPHONE', { align: 'center' });
   doc.moveDown();
 
   const items = [
@@ -148,9 +178,9 @@ app.get('/pdf', (req, res) => {
     ['Tên thiết bị', name],
     ['Serial', serial],
     ['UDID', udid],
-    ['iCloud / Find My', 
-     icloud === 'ON' ? 'ON (CÓ TÀI KHOẢN)' : 
-     icloud === 'OFF' ? 'OFF (SẠCH 100%)' : 'KHÔNG XÁC ĐỊNH']
+    ['iCloud / Find My',
+      icloud === 'ON' ? 'ON (CÓ TÀI KHOẢN)' :
+        icloud === 'OFF' ? 'OFF (SẠCH 100%)' : 'KHÔNG XÁC ĐỊNH']
   ];
 
   doc.fontSize(12).font('Helvetica');
@@ -162,7 +192,7 @@ app.get('/pdf', (req, res) => {
   });
 
   doc.fontSize(10).fillColor('#8E8E93')
-     .text(`Báo cáo được tạo tự động – ${new Date().toLocaleString('vi-VN')}`, 50, doc.page.height - 100, { align: 'center', width: 500 });
+    .text(`Báo cáo được tạo tự động – ${new Date().toLocaleString('vi-VN')}`, 50, doc.page.height - 100, { align: 'center', width: 500 });
 
   doc.end();
 });
