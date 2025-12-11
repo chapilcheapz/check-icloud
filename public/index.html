@@ -382,11 +382,10 @@
 <body>
   <div class="container">
     <header>
-      <h1>🍎 Check iPhone Pro</h1>
+      <h1>Check iPhone Pro</h1>
       <p class="subtitle">Kiểm tra iCloud, bảo hành, dung lượng, serial – chỉ vài giây</p>
     </header>
 
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay hidden">
       <div class="loading-content">
         <div class="loading-spinner-large"></div>
@@ -399,7 +398,6 @@
       </div>
     </div>
 
-    <!-- Card 1: Check USB (existing) -->
     <div class="card">
       <div class="card-title">🔌 Kiểm tra qua USB (cắm cáp)</div>
       <div class="actions">
@@ -417,7 +415,6 @@
       <div class="info-grid" id="infoGrid"></div>
     </div>
 
-    <!-- Card 2: Check Online (new) -->
     <div class="card">
       <div class="card-title">🌐 Kiểm tra Online (nhập Serial/IMEI)</div>
       <div class="input-group">
@@ -440,7 +437,6 @@
   </div>
 
   <script>
-    // === USB CHECK ELEMENTS ===
     const startBtn = document.getElementById('startBtn');
     const pdfBtn = document.getElementById('pdfBtn');
     const statusEl = document.getElementById('status');
@@ -449,7 +445,6 @@
     const spinner = document.getElementById('spinner');
     const btnText = document.getElementById('btnText');
 
-    // === SERIAL CHECK ELEMENTS ===
     const serialInput = document.getElementById('serialInput');
     const checkSerialBtn = document.getElementById('checkSerialBtn');
     const serialSpinner = document.getElementById('serialSpinner');
@@ -460,7 +455,6 @@
 
     let currentInfo = {};
 
-    // === USB CHECK HANDLER ===
     startBtn.onclick = async () => {
       statusEl.className = 'status hidden';
       resultCard.classList.add('hidden');
@@ -560,19 +554,15 @@
         return;
       }
 
-      // Reset UI
       serialStatus.className = 'status hidden';
       onlineResultCard.classList.add('hidden');
       onlineInfoGrid.innerHTML = '';
 
-      // Show loading overlay
       loadingOverlay.classList.remove('hidden');
       loadingSubtext.textContent = 'Kết nối đến server...';
 
-      // Update status text with animation
       const statusMessages = [
         'Đang kiểm tra...',
-        'Đang nhập Serial/IMEI...',
         'Đang chờ phản hồi...',
         'Đang xử lý kết quả...'
       ];
@@ -585,7 +575,6 @@
         }
       }, 4000);
 
-      // Disable button
       checkSerialBtn.disabled = true;
       serialSpinner.classList.remove('hidden');
       serialBtnText.textContent = 'Đang kiểm tra...';
@@ -615,7 +604,6 @@
       }
     };
 
-    // Enter key support
     serialInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') checkSerialBtn.click();
     });
@@ -629,10 +617,18 @@
 
       for (const [key, value] of Object.entries(data)) {
         if (value && value !== 'Check here') {
+          let itemClass = '';
+          if (key === 'iCloud Lock') {
+            if (value === 'ON') itemClass = 'icloud-on';
+            else if (value === 'OFF') itemClass = 'icloud-off';
+            else itemClass = 'icloud-unknown';
+          }
+
           items.push({
             label: key,
             value: value,
-            highlight: key.toLowerCase().includes('model')
+            highlight: key.toLowerCase().includes('model'),
+            class: itemClass
           });
         }
       }
@@ -643,7 +639,7 @@
         if (item.highlight) div.style.background = '#E5F3FF';
         div.innerHTML = `
           <div class="info-label">${item.label}</div>
-          <div class="info-value">${item.value}</div>
+          <div class="info-value ${item.class || ''}">${item.value}</div>
         `;
         onlineInfoGrid.appendChild(div);
       });
@@ -654,14 +650,8 @@
     function showSerialError(msg) {
       serialStatus.className = 'status error';
 
-      // Kiểm tra nếu là rate limit
       if (msg.includes('giới hạn') || msg.includes('limit')) {
-        serialStatus.innerHTML = `
-          <div>⚠️ ${msg}</div>
-          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;">
-            Vui lòng đợi 5-10 phút rồi thử lại.
-          </div>
-        `;
+        serialStatus.innerHTML = `<div>⚠️ ${msg}</div>`;
       } else {
         serialStatus.textContent = msg;
       }

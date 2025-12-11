@@ -4,16 +4,13 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const path = require('path');
 
-// Sử dụng puppeteer-extra với stealth plugin để tránh bị phát hiện là bot
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
-// === CACHE ĐỂ TRÁNH GỌI LẠI ===
 const resultCache = new Map();
-const CACHE_TTL = 60 * 60 * 1000; // 1 giờ
+const CACHE_TTL = 60 * 60 * 1000;
 
-// === DANH SÁCH USER AGENTS ===
 const userAgents = [
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -22,58 +19,43 @@ const userAgents = [
   'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 ];
 
-// === CẤU HÌNH TOR NETWORK (miễn phí) ===
-// Tor chạy SOCKS5 proxy trên localhost:9050
-// Để bật: brew services start tor
-// LƯU Ý: iunlocker.com có thể chặn Tor exit nodes
 const TOR_CONFIG = {
-  enabled: false, // Đặt true để dùng Tor (có thể bị chặn)
+  enabled: false,
   proxy: 'socks5://127.0.0.1:9050'
 };
 
-// === CẤU HÌNH PROXY (tùy chọn - nếu không dùng Tor) ===
 const PROXY_CONFIG = {
-  enabled: false, // Đặt true để bật proxy thay vì Tor
+  enabled: false,
   list: [
     // 'http://proxy1.example.com:8080',
     // 'socks5://127.0.0.1:1080'
   ]
 };
 
-// === HÀM LẤY PROXY ===
 function getProxy() {
-  // Ưu tiên Tor nếu bật
   if (TOR_CONFIG.enabled) {
     return TOR_CONFIG.proxy;
   }
-  // Sau đó mới dùng proxy list
   if (PROXY_CONFIG.enabled && PROXY_CONFIG.list.length > 0) {
     return PROXY_CONFIG.list[Math.floor(Math.random() * PROXY_CONFIG.list.length)];
   }
   return null;
 }
 
-// === HÀM RANDOM DELAY ===
 function randomDelay(min, max) {
   return new Promise(r => setTimeout(r, Math.random() * (max - min) + min));
 }
-
-// === CRAWL IUNLOCKER.COM ===
 async function crawlIunlocker(serial) {
-  // Kiểm tra cache
   const cached = resultCache.get(serial);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     console.log(`Lấy từ cache: ${serial}`);
     return cached.data;
   }
 
-  // Random user agent
   const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
 
-  // Lấy proxy ngẫu nhiên (nếu có)
   const proxy = getProxy();
 
-  // Cấu hình launch options
   const launchOptions = {
     headless: 'new',
     args: [
@@ -83,13 +65,11 @@ async function crawlIunlocker(serial) {
     ]
   };
 
-  // Thêm proxy nếu có cấu hình riêng (Tor hoặc proxy list)
   if (proxy) {
     launchOptions.args.push(`--proxy-server=${proxy}`);
     console.log(`Sử dụng proxy: ${proxy.replace(/\/\/.*:.*@/, '//***:***@')}`);
   } else {
-    // Không có proxy riêng → dùng system proxy (VPN nếu đang bật)
-    // Thêm flag để Chromium dùng system proxy
+    console.log('Sử dụng system proxy (VPN nếu đang bật)');
     console.log('Sử dụng system proxy (VPN nếu đang bật)');
   }
 
@@ -98,7 +78,6 @@ async function crawlIunlocker(serial) {
   try {
     const page = await browser.newPage();
 
-    // Ẩn dấu hiệu automation
     await page.evaluateOnNewDocument(() => {
       Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
     });
@@ -109,7 +88,6 @@ async function crawlIunlocker(serial) {
     });
     await page.setUserAgent(userAgent);
 
-    // Random delay trước khi bắt đầu (2-5 giây)
     await randomDelay(2000, 5000);
 
     await page.goto('https://iunlocker.com/vi/check_imei.php', {
@@ -234,6 +212,107 @@ async function crawlIunlocker(serial) {
   } catch (err) {
     await browser.close();
     throw err;
+  }
+}
+
+// === CRAWL ICLOUD STATUS TỪ IUNLOCKER.COM ===
+async function crawlIcloudStatus(serial) {
+  // Random user agent
+  const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+
+  const proxy = getProxy();
+
+  const launchOptions = {
+    headless: 'new',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled'
+    ]
+  };
+
+  if (proxy) {
+    launchOptions.args.push(`--proxy-server=${proxy}`);
+  }
+
+  const browser = await puppeteer.launch(launchOptions);
+
+  try {
+    const page = await browser.newPage();
+
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+    });
+
+    await page.setViewport({
+      width: 1280 + Math.floor(Math.random() * 100),
+      height: 800 + Math.floor(Math.random() * 100)
+    });
+    await page.setUserAgent(userAgent);
+
+    // Random delay
+    await randomDelay(1000, 2000);
+
+    await page.goto('https://iunlocker.com/vi/check_icloud.php', {
+      waitUntil: 'networkidle2',
+      timeout: 60000
+    });
+
+    await randomDelay(1000, 2000);
+
+    // Nhập serial
+    await page.waitForSelector('#imei', { timeout: 10000 });
+    for (const char of serial) {
+      await page.type('#imei', char, { delay: 50 + Math.random() * 80 });
+    }
+
+    await randomDelay(500, 1500);
+
+    // Click nút Kiểm tra
+    await Promise.all([
+      page.click('a.button-go'),
+      page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }).catch(() => { })
+    ]);
+
+    await randomDelay(3000, 5000);
+
+    // Lấy giá trị từ hidden input #out_t
+    const icloudData = await page.evaluate(() => {
+      const hiddenInput = document.querySelector('#out_t');
+      if (hiddenInput && hiddenInput.value) {
+        const value = hiddenInput.value;
+
+        // Parse iCloud Lock
+        const icloudLockMatch = value.match(/iCloud Lock:\s*(ON|OFF)/i);
+        const icloudLock = icloudLockMatch ? icloudLockMatch[1].toUpperCase() : null;
+
+        // Parse iCloud Status
+        const icloudStatusMatch = value.match(/iCloud Status:\s*([^\n]+)/i);
+        const icloudStatus = icloudStatusMatch ? icloudStatusMatch[1].trim() : null;
+
+        return {
+          icloudLock,
+          icloudStatus,
+          raw: value
+        };
+      }
+
+      // Kiểm tra rate limit
+      const allText = document.body.innerText;
+      if (allText.includes('giới hạn') || allText.includes('limit') || allText.includes('thử lại sau')) {
+        return { error: 'rate_limit' };
+      }
+
+      return null;
+    });
+
+    await browser.close();
+    return icloudData;
+
+  } catch (err) {
+    await browser.close();
+    console.error('Lỗi crawl iCloud:', err.message);
+    return null;
   }
 }
 
@@ -397,13 +476,27 @@ app.post('/check-serial', async (req, res) => {
 
   try {
     console.log(`Đang kiểm tra serial: ${serial}`);
-    const data = await crawlIunlocker(serial);
 
-    if (data.error) {
-      return res.status(400).json({ success: false, error: data.error });
+    // Chạy song song cả hai crawl
+    const [imeiData, icloudData] = await Promise.all([
+      crawlIunlocker(serial),
+      crawlIcloudStatus(serial)
+    ]);
+
+    // Xử lý lỗi từ IMEI check
+    if (imeiData.error) {
+      return res.status(400).json({ success: false, error: imeiData.error });
     }
 
-    res.json({ success: true, data });
+    // Merge kết quả iCloud vào data
+    if (icloudData && icloudData.icloudLock) {
+      imeiData['iCloud Lock'] = icloudData.icloudLock;
+      console.log(`iCloud Lock: ${icloudData.icloudLock}`);
+    } else {
+      imeiData['iCloud Lock'] = 'Không xác định';
+    }
+
+    res.json({ success: true, data: imeiData });
   } catch (err) {
     console.error('Lỗi crawl:', err.message);
     res.status(500).json({
