@@ -4,6 +4,239 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const path = require('path');
 
+// Sử dụng puppeteer-extra với stealth plugin để tránh bị phát hiện là bot
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
+
+// === CACHE ĐỂ TRÁNH GỌI LẠI ===
+const resultCache = new Map();
+const CACHE_TTL = 60 * 60 * 1000; // 1 giờ
+
+// === DANH SÁCH USER AGENTS ===
+const userAgents = [
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+];
+
+// === CẤU HÌNH TOR NETWORK (miễn phí) ===
+// Tor chạy SOCKS5 proxy trên localhost:9050
+// Để bật: brew services start tor
+// LƯU Ý: iunlocker.com có thể chặn Tor exit nodes
+const TOR_CONFIG = {
+  enabled: false, // Đặt true để dùng Tor (có thể bị chặn)
+  proxy: 'socks5://127.0.0.1:9050'
+};
+
+// === CẤU HÌNH PROXY (tùy chọn - nếu không dùng Tor) ===
+const PROXY_CONFIG = {
+  enabled: false, // Đặt true để bật proxy thay vì Tor
+  list: [
+    // 'http://proxy1.example.com:8080',
+    // 'socks5://127.0.0.1:1080'
+  ]
+};
+
+// === HÀM LẤY PROXY ===
+function getProxy() {
+  // Ưu tiên Tor nếu bật
+  if (TOR_CONFIG.enabled) {
+    return TOR_CONFIG.proxy;
+  }
+  // Sau đó mới dùng proxy list
+  if (PROXY_CONFIG.enabled && PROXY_CONFIG.list.length > 0) {
+    return PROXY_CONFIG.list[Math.floor(Math.random() * PROXY_CONFIG.list.length)];
+  }
+  return null;
+}
+
+// === HÀM RANDOM DELAY ===
+function randomDelay(min, max) {
+  return new Promise(r => setTimeout(r, Math.random() * (max - min) + min));
+}
+
+// === CRAWL IUNLOCKER.COM ===
+async function crawlIunlocker(serial) {
+  // Kiểm tra cache
+  const cached = resultCache.get(serial);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    console.log(`Lấy từ cache: ${serial}`);
+    return cached.data;
+  }
+
+  // Random user agent
+  const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+
+  // Lấy proxy ngẫu nhiên (nếu có)
+  const proxy = getProxy();
+
+  // Cấu hình launch options
+  const launchOptions = {
+    headless: 'new',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled'
+    ]
+  };
+
+  // Thêm proxy nếu có cấu hình riêng (Tor hoặc proxy list)
+  if (proxy) {
+    launchOptions.args.push(`--proxy-server=${proxy}`);
+    console.log(`Sử dụng proxy: ${proxy.replace(/\/\/.*:.*@/, '//***:***@')}`);
+  } else {
+    // Không có proxy riêng → dùng system proxy (VPN nếu đang bật)
+    // Thêm flag để Chromium dùng system proxy
+    console.log('Sử dụng system proxy (VPN nếu đang bật)');
+  }
+
+  const browser = await puppeteer.launch(launchOptions);
+
+  try {
+    const page = await browser.newPage();
+
+    // Ẩn dấu hiệu automation
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+    });
+
+    await page.setViewport({
+      width: 1280 + Math.floor(Math.random() * 100),
+      height: 800 + Math.floor(Math.random() * 100)
+    });
+    await page.setUserAgent(userAgent);
+
+    // Random delay trước khi bắt đầu (2-5 giây)
+    await randomDelay(2000, 5000);
+
+    await page.goto('https://iunlocker.com/vi/check_imei.php', {
+      waitUntil: 'networkidle2',
+      timeout: 60000
+    });
+
+    // Random delay sau khi load (1-3 giây)
+    await randomDelay(1000, 3000);
+
+    // Nhập serial vào input
+    await page.waitForSelector('#imei', { timeout: 10000 });
+
+    // Gõ với tốc độ ngẫu nhiên giống người thật
+    for (const char of serial) {
+      await page.type('#imei', char, { delay: 50 + Math.random() * 100 });
+    }
+
+    // Random delay trước khi click (0.5-2 giây)
+    await randomDelay(500, 2000);
+
+    // Click nút Kiểm tra và chờ navigation hoặc content thay đổi
+    await Promise.all([
+      page.click('a.button-go'),
+      page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }).catch(() => {
+        // Fallback: nếu không có navigation, chờ thêm
+      })
+    ]);
+
+    // Chờ thêm để đảm bảo content đã load (5-8 giây)
+    await randomDelay(5000, 8000);
+
+    // Parse kết quả - dùng CSS selectors từ iunlocker.com
+    const data = await page.evaluate(() => {
+      const result = {};
+
+      // === LẤY MODEL TỪ CLASS .iuResCard_model ===
+      const modelEl = document.querySelector('.iuResCard_model');
+      if (modelEl) {
+        result['Model'] = modelEl.textContent.trim();
+      }
+
+      // === LẤY CÁC TRƯỜNG TỪ .iuResCard_row ===
+      const rows = document.querySelectorAll('.iuResCard_row');
+      rows.forEach(row => {
+        const labelEl = row.querySelector('.iuResCard_label');
+        const valueEl = row.querySelector('.iuResCard_value');
+
+        if (labelEl && valueEl) {
+          let label = labelEl.textContent.trim();
+          let value = valueEl.textContent.trim();
+
+          // Bỏ qua các trường không cần thiết
+          if (!label || label === ' ' || value === 'Check here' || value.includes('Click to buy')) {
+            return;
+          }
+
+          // Bỏ qua iCloud (cần trả phí)
+          if (label.toLowerCase().includes('icloud')) {
+            return;
+          }
+
+          // Bỏ qua provider info
+          if (label.toLowerCase().includes('provided by')) {
+            return;
+          }
+
+          // Normalize labels sang tiếng Việt
+          const labelMap = {
+            'Số sê-ri': 'Serial',
+            'Past First Activation': 'Đã kích hoạt',
+            'Apple Care': 'Apple Care',
+            'Warranty Name': 'Bảo hành',
+            'Estimated Expiration Date': 'Ngày hết hạn',
+            'Service & Support Options': 'Dịch vụ hỗ trợ',
+            'Sold By | Carrier | SIMLock': 'SIM Lock'
+          };
+
+          const normalizedLabel = labelMap[label] || label;
+          result[normalizedLabel] = value;
+        }
+      });
+
+      // === FALLBACK: Tìm trong innerText nếu không có kết quả ===
+      if (Object.keys(result).length === 0) {
+        const allText = document.body.innerText;
+
+        // Kiểm tra rate limit
+        if (allText.includes('giới hạn') || allText.includes('limit') || allText.includes('thử lại sau') || allText.includes('try again')) {
+          result.rateLimited = true;
+          result.error = 'Đã đạt giới hạn. Vui lòng thử lại sau vài phút.';
+        }
+        // Kiểm tra lỗi khác
+        else if (allText.includes('Invalid') || allText.includes('không hợp lệ') || allText.includes('not found')) {
+          result.error = 'Serial/IMEI không hợp lệ hoặc không tìm thấy';
+        }
+      }
+
+      return result;
+    });
+
+    await browser.close();
+
+    // Kiểm tra rate limit
+    if (data.rateLimited) {
+      return { error: data.error, rateLimited: true };
+    }
+
+    // Nếu không lấy được gì, trả về lỗi
+    if (Object.keys(data).length === 0) {
+      return { error: 'Không tìm thấy thông tin. Vui lòng kiểm tra lại Serial/IMEI.' };
+    }
+
+    // Lưu vào cache nếu có kết quả hợp lệ
+    if (!data.error && Object.keys(data).length > 1) {
+      resultCache.set(serial, { data, timestamp: Date.now() });
+      console.log(`Đã cache kết quả: ${serial}`);
+    }
+
+    return data;
+
+  } catch (err) {
+    await browser.close();
+    throw err;
+  }
+}
+
 // === KHỞI TẠO APP TRƯỚC ===
 const app = express();
 app.use(express.static('public'));
@@ -149,6 +382,35 @@ app.post('/check', async (req, res) => {
   }
 
   res.json({ steps, info: parsed });
+});
+
+// === ROUTE: /check-serial ===
+app.post('/check-serial', async (req, res) => {
+  const { serial } = req.body;
+
+  if (!serial || serial.length < 8) {
+    return res.status(400).json({
+      success: false,
+      error: 'Serial/IMEI không hợp lệ (tối thiểu 8 ký tự)'
+    });
+  }
+
+  try {
+    console.log(`Đang kiểm tra serial: ${serial}`);
+    const data = await crawlIunlocker(serial);
+
+    if (data.error) {
+      return res.status(400).json({ success: false, error: data.error });
+    }
+
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error('Lỗi crawl:', err.message);
+    res.status(500).json({
+      success: false,
+      error: 'Không thể lấy dữ liệu. Vui lòng thử lại sau.'
+    });
+  }
 });
 
 // === ROUTE: /pdf ===
